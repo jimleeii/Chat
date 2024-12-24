@@ -1,0 +1,30 @@
+@using Chat.Pages
+
+<div>
+    <nav>
+        <ul>
+            @if (!User.Identity.IsAuthenticated) {
+                <li><a asp-page="/Account/Login">Login</a></li>
+                <li><a asp-page="/Account/AzureLogin">Login with Azure AD</a></li>
+            }
+            
+            @if (User.Identity.IsAuthenticated) {
+                <li><a asp-page="/Account/Logout">Logout (@User.Identity.Name)</a></li>
+            }
+        </ul>
+    </nav>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const elements = document.querySelectorAll("nav li a");
+        elements.forEach(element => {
+            if (element.textContent.includes("Login")) {
+                element.classList.add("contains-login");
+            }
+            if (element.textContent.includes("Logout")) {
+                element.classList.add("contains-logout");
+            }
+        });
+    });
+</script>

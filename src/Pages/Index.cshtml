@@ -1,0 +1,50 @@
+﻿@page
+@model Chat.Pages.IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="card">
+    <input type="text" id="userInput" placeholder="Your Name" />
+    <input type="text" id="targetUserInput" placeholder="Target User" />
+    <input type="text" id="messageInput" placeholder="Message" />
+    <button onclick="sendMessage()">Send</button>
+    <button onclick="sendMessageAll()">Send All</button>
+    <ul id="messagesList"></ul>
+</div>
+
+<script src="/js/signalr.js"></script>
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/api/chathub")
+        .build();
+
+    connection.on("ReceiveMessage", (user, message) => {
+        const li = document.createElement("li");
+        li.textContent = `${user}: ${message}`;
+        document.getElementById("messagesList").appendChild(li);
+    });
+
+    connection.start().catch(err => console.error(err.toString()));
+
+    function sendMessage() {
+        if (connection.state === signalR.HubConnectionState.Connected) {
+            const user = document.getElementById("userInput").value;
+            const targetUser = document.getElementById("targetUserInput").value;
+            const message = document.getElementById("messageInput").value;
+            connection.invoke("SendMessageToUserAsync", targetUser, message).catch(err => console.error(err.toString()));
+        } else {
+            console.error("Connection is not established. Please try again later.");
+        }
+    }
+
+    function sendMessageAll() {
+        if (connection.state === signalR.HubConnectionState.Connected) {
+            const user = document.getElementById("userInput").value;
+            const message = document.getElementById("messageInput").value;
+            connection.invoke("SendMessageToAllAsync", user, message).catch(err => console.error(err.toString()));
+        } else {
+            console.error("Connection is not established. Please try again later.");
+        }
+    }
+</script>

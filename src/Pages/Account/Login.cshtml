@@ -1,0 +1,16 @@
+﻿@page
+@model Chat.Pages.Account.LoginModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="card">
+    <form method="post">
+        <div>
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" />
+        </div>
+        <button type="submit">Login</button>
+        <a asp-page="/Index">Cancel</a>
+    </form>
+</div>
